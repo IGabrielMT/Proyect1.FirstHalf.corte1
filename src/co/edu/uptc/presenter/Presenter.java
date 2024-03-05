@@ -2,16 +2,22 @@ package co.edu.uptc.presenter;
 
 import File_Txt1.src.co.edu.uptc.servicesfiles.ProcessesFiles;
 import co.edu.uptc.model.CombineNames;
+import co.edu.uptc.text.ManagerProperties;
 import co.edu.uptc.view.View;
 
 import java.io.File;
 import java.util.List;
 
 public class Presenter {
-    private final CombineNames combineNames = new CombineNames();
-    private final ProcessesFiles process = new ProcessesFiles();
+    private final CombineNames combineNames;
+    private final ProcessesFiles process;
+    private final ManagerProperties managerProperties;
     private final View view = new View();
     public Presenter(){
+        combineNames = new CombineNames();
+        process = new ProcessesFiles();
+        managerProperties = new ManagerProperties();
+        managerProperties.setFileName("config.properties");
 
     }
     public void menu(){
@@ -27,10 +33,12 @@ public class Presenter {
                     modifyFile();
                     break;
                 case 3:
-                    showList("data/Names.txt");
+                    String filePath = managerProperties.getValue("filename_names");
+                    showList(filePath);
                     break;
                 case 4:
-                    showList("data/LastNames.txt");
+                    String filePath2 = managerProperties.getValue("filename_lastnames");
+                    showList(filePath2);
                     break;
                 case 5:
                     System.exit(0);
@@ -43,6 +51,7 @@ public class Presenter {
 
     }
     private void showList(String filePath) {
+        System.out.println(filePath);
         process.setNameFile(filePath);
         try {
             view.showMessage(process.extraerString().toString());
@@ -151,13 +160,15 @@ public class Presenter {
         view.showMessage("Archivo creado con nombre Combinaciones.txt en la carpeta raiz del proyecto");
     }
     private void setInfoForCombineNames(){
-        process.setNameFile("data/Names.txt");
+        String nameValue = managerProperties.getValue("filename_names");
+        process.setNameFile(nameValue);
         try {
             combineNames.setNames(process.extraerString());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        process.setNameFile("data/LastNames.txt");
+        String lastNameValue = managerProperties.getValue("filename_lastnames");
+        process.setNameFile(lastNameValue);
         try {
             combineNames.setLastNames(process.extraerString());
         } catch (Exception e) {
